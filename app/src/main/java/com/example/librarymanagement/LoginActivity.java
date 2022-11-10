@@ -11,12 +11,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.librarymanagement.dao.AdminDAO;
 import com.example.librarymanagement.service.LoginTestService;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -57,8 +59,9 @@ public class LoginActivity extends AppCompatActivity {
         EditText edtPass = findViewById(R.id.edtPass);
         Button btnLogin = findViewById(R.id.btnLogin);
         intentFilter = new IntentFilter();
-        intentFilter.addAction("kiemTraDangNhap");
+        intentFilter.addAction("checkLogin");
         intentFilter.addAction("");
+        AdminDAO adminDAO = new AdminDAO(this);
 
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -66,16 +69,15 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String user = edtUser.getText().toString();
                 String pass = edtPass.getText().toString();
-
-                Intent intent = new Intent(LoginActivity.this, LoginTestService.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("user", user);
-                bundle.putString("pass", pass);
-                intent.putExtras(bundle);
-                startService(intent);
-
+                    Intent intent = new Intent(LoginActivity.this, LoginTestService.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("user", user);
+                    bundle.putString("pass", pass);
+                    intent.putExtras(bundle);
+                    startService(intent);
             }
         });
+
 
         btnFacebook = findViewById(R.id.btnFacebook);
         callbackManager = CallbackManager.Factory.create();
@@ -111,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                        checkLogin.launch(signInIntent);
+                        checkLoginGoogle.launch(signInIntent);
                     }
                 });
 
@@ -122,8 +124,33 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(myBroadcast, intentFilter);
+    }
+
+    public BroadcastReceiver myBroadcast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()){
+                case "checkLogin":
+                    Bundle bundle = intent.getExtras();
+                    boolean check = bundle.getBoolean("check");
+                    if(check){
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    }else {
+                        Toast.makeText(context, "Sign in failed!", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
         //google
-        ActivityResultLauncher<Intent> checkLogin = registerForActivityResult(
+        ActivityResultLauncher<Intent> checkLoginGoogle = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
@@ -181,34 +208,11 @@ public class LoginActivity extends AppCompatActivity {
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
-            Toast.makeText(this, "Have signed in Google" + account.getEmail(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Have signed in Google!" + account.getEmail(), Toast.LENGTH_SHORT).show();
             btnGoogle.setVisibility(View.GONE);
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        registerReceiver(myBroadcast, intentFilter);
-    }
 
-    public BroadcastReceiver myBroadcast = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
-                case "kiemTraDangNhap":
-                    Bundle bundle = intent.getExtras();
-                    boolean check = bundle.getBoolean("check");
-                    if(check){
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    }else {
-                        Toast.makeText(context, "Sign in failed!", Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
 
 }

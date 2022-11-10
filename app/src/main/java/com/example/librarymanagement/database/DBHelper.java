@@ -29,6 +29,8 @@ public class DBHelper extends SQLiteOpenHelper {
         //data mau
         sqLiteDatabase.execSQL("INSERT INTO LOAISACH VALUES (1, 'Thiếu nhi'), (2, 'Tiểu thuyết'), (3, 'Tâm lý'), (4, 'Khoa học')");
         sqLiteDatabase.execSQL("INSERT INTO SACH VALUES (1, 'Doraemon', 20000, 1), (2, 'Harry Potter', 150000, 2), (3, 'Tâm lý học tội phạm', 95000, 3), (4, 'Mười vạn câu hỏi vì sao', 250000, 4)");
+
+        sqLiteDatabase.execSQL("INSERT INTO THUTHU VALUES ('admin01', 'Nguyễn Bảo Ngọc', 'ngoc4503'), ('admin02', 'Nguyễn Văn A', 'admin02')");
     }
 
     @Override

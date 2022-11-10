@@ -6,18 +6,18 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.example.librarymanagement.database.DBHelper;
 
-public class UserDAO {
+public class AdminDAO {
     DBHelper dbHelper;
     SharedPreferences sharedPreferences;
 
-    public UserDAO(Context context){
+    public AdminDAO(Context context){
         dbHelper = new DBHelper(context);
         sharedPreferences = context.getSharedPreferences("THONGTIN", Context.MODE_PRIVATE);
     }
     // kiem tra thong tin dang nhap
-    public boolean kiemTraDangNhap(String user, String pass){
+    public boolean checkLogin(String matt, String matkhau){
         SQLiteDatabase sqLiteDatabase = dbHelper.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM NGUOIDUNG WHERE username = ? AND password = ?", new String[]{user, pass});
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM THUTHU WHERE matt = ? AND matkhau = ?", new String[]{matt, matkhau});
         if(cursor.getCount() !=0){
             cursor.moveToFirst();
             SharedPreferences.Editor editor = sharedPreferences.edit();

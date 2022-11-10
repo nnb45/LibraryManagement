@@ -14,10 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LibraryManagement"
         tools:targetApi="31">
-        <service
-            android:name=".LoginTestService"
-            android:enabled="true"
-            android:exported="true"></service>
 
         <activity
             android:name=".MainActivity"
@@ -53,6 +49,8 @@
         <meta-data
             android:name="com.facebook.sdk.ClientToken"
             android:value="6822c85383950c9a5f9f1cae3a4b344e" />
+        <service android:name=".service.LoginTestService"/>
+
     </application>
 
 </manifest>
